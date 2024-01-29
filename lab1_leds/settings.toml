@@ -1,0 +1,7 @@
+#WIFI SETTINGS
+WIFI_SSID = "Maker Space"
+WIFI_PASSWORD = "bodrumkee"
+
+#AP SETTINGS
+AP_SSID = "PicklesAP"
+AP_PASSWORD = "12345678"
