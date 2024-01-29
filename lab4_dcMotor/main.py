@@ -113,7 +113,7 @@ def buttonpress(request: Request):
             motor_throttle = int(pwm) / 100
             print("Motor throttle is set to: ", motor_throttle)
             # Set the motor throttle
-            motorLed.throttle = motor_throttle * motorLed.throttle/abs(motorLed.throttle)
+            motorLed.throttle = motor_throttle * helpers.sign(motor_throttle)
             print(motorLed)
         except Exception as e:
             print("Exception ", e)
