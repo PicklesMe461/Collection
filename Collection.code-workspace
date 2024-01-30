@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "D:/"
+		},
+		{
+			"path": "../Lab-6---Stepper-Motor-"
 		}
 	],
 	"settings": {
@@ -13,10 +16,12 @@
 			"reportMissingModuleSource": "none"
 		},
 		"python.analysis.extraPaths": [
-			"",
+			"c:\\Users\\yunus\\.vscode\\extensions\\joedevivo.vscode-circuitpython-0.1.20-win32-x64\\boards\\0x239A\\0x80F4",
 			"c:\\Users\\yunus\\.vscode\\extensions\\joedevivo.vscode-circuitpython-0.1.20-win32-x64\\stubs",
-			"c:\\Users\\yunus\\AppData\\Roaming\\Code\\User\\globalStorage\\joedevivo.vscode-circuitpython\\bundle\\20240127\\adafruit-circuitpython-bundle-py-20240127\\lib"
+			"c:\\Users\\yunus\\AppData\\Roaming\\Code\\User\\globalStorage\\joedevivo.vscode-circuitpython\\bundle\\20240130\\adafruit-circuitpython-bundle-py-20240130\\lib"
 		],
-		"circuitpython.board.version": "8.2.9"
+		"circuitpython.board.version": "8.2.9",
+		"circuitpython.board.vid": "0x239A",
+		"circuitpython.board.pid": "0x80F4"
 	}
 }
