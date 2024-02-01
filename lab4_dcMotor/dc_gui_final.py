@@ -125,35 +125,74 @@ class Ui_widget(object):
     def start(self):
         self.sense = "Start"
         self.label_5.setText("Duty Cycle: {}, Frequency: {}, Sense: {}".format(self.duty_cycle, self.frequency, self.sense))
-        requests.post(self.target_address, data={"LED" : "ON"})
         
+        try:
+            requests.post(self.target_address, data={"MODE" : "START", "DUTY_CYCLE" : str(self.duty_cycle), "FREQUENCY" : str(self.frequency), "SENSE" : "CW"})
+        except Exception as e:
+            print(e)
         return "start"
 
     def stop(self):
         self.sense = "Stop"
         self.label_5.setText("Duty Cycle: {}, Frequency: {}, Sense: {}".format(self.duty_cycle, self.frequency, self.sense))
+        
+        try:
+            requests.post(self.target_address, data={"MODE" : "STOP"})
+        except Exception as e:
+            print(e)
+        
         return "stop"
 
     def radio_btns(self):
         if self.radioButton_3.isChecked():
             self.duty_cycle = int(self.radioButton_3.text())
             self.label_5.setText("Duty Cycle: {}, Frequency: {}, Sense: {}".format(self.duty_cycle, self.frequency, self.sense))
+            
+            try:
+                requests.post(self.target_address, data={"PWM" : str(self.duty_cycle)})
+            except Exception as e:
+                print(e)
+
             return int(self.radioButton_3.text())
         if self.radioButton_4.isChecked():
             self.duty_cycle = int(self.radioButton_4.text())
             self.label_5.setText("Duty Cycle: {}, Frequency: {}, Sense: {}".format(self.duty_cycle, self.frequency, self.sense))
+            
+            try:
+                requests.post(self.target_address, data={"PWM" : str(self.duty_cycle)})
+            except Exception as e:  
+                print(e)
+            
             return int(self.radioButton_4.text())
         if self.radioButton_5.isChecked():
             self.duty_cycle = int(self.radioButton_5.text())
             self.label_5.setText("Duty Cycle: {}, Frequency: {}, Sense: {}".format(self.duty_cycle, self.frequency, self.sense))
+            
+            try:
+                requests.post(self.target_address, data={"PWM" : str(self.duty_cycle)})
+            except Exception as e:
+                print(e)
+
             return int(self.radioButton_5.text())
         if self.radioButton_6.isChecked():
-            self.duty_cycle = int(self.radioButton_6.text())
+            self.duty_cycle = int(self.radioButton_6.text())          
             self.label_5.setText("Duty Cycle: {}, Frequency: {}, Sense: {}".format(self.duty_cycle, self.frequency, self.sense))
+            
+            try:
+                requests.post(self.target_address, data={"PWM" : str(self.duty_cycle)})
+            except Exception as e:
+                print(e)
+            
             return int(self.radioButton_6.text())
         if self.radioButton_7.isChecked():
             self.duty_cycle = int(self.radioButton_7.text())
             self.label_5.setText("Duty Cycle: {}, Frequency: {}, Sense: {}".format(self.duty_cycle, self.frequency, self.sense))
+            
+            try:
+                requests.post(self.target_address, data={"PWM" : str(self.duty_cycle)})
+            except Exception as e:
+                print(e)
+            
             return int(self.radioButton_7.text())
         
 
@@ -161,20 +200,46 @@ class Ui_widget(object):
         if self.radioButton.isChecked():
             self.sense = "CW"
             self.label_5.setText("Duty Cycle: {}, Frequency: {}, Sense: {}".format(self.duty_cycle, self.frequency, self.sense))
+            
+            try:
+                requests.post(self.target_address, data={"SENSE" : "CW"})
+            except Exception as e:
+                print(e)
+            
             return "CW"
         if self.radioButton_2.isChecked():
             self.sense = "CCW"
             self.label_5.setText("Duty Cycle: {}, Frequency: {}, Sense: {}".format(self.duty_cycle, self.frequency, self.sense))
+            
+            try:
+                requests.post(self.target_address, data={"SENSE" : "CCW"})
+            except Exception as e:
+                print(e)
+
+            
             return "CCW"
 
     def scrollbar_value(self):
         self.duty_cycle = self.horizontalScrollBar.value()
         self.label_5.setText("Duty Cycle: {}, Frequency: {}, Sense: {}".format(self.duty_cycle, self.frequency, self.sense))
+        
+        try:
+            requests.post(self.target_address, data={"PWM" : str(self.duty_cycle)})
+        except Exception as e:
+                print(e)
+        
         return self.horizontalScrollBar.value()
 
     def scrollbar2_value(self):
         self.frequency = self.horizontalScrollBar_2.value()
         self.label_5.setText("Duty Cycle: {}, Frequency: {}, Sense: {}".format(self.duty_cycle, self.frequency, self.sense))
+        
+        try:    
+            requests.post(self.target_address, data={"FREQUENCY" : str(self.frequency)})
+        except Exception as e:
+            print(e)
+
+        
         return self.horizontalScrollBar_2.value()
 
     def display(self):
