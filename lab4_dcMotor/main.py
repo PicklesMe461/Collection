@@ -2,6 +2,9 @@
 #
 # SPDX-License-Identifier: MIT
 
+# SWITCH BETWEEN MANUAL AND WEB CONTROL BY COMMENTING OUT THE OTHER
+
+
 import os
 import time
 import ipaddress
@@ -48,28 +51,28 @@ def manualRide():
         buttonR_pressed = False
         buttonL_pressed = False
         manual_throttle = pwm_converter(pot.value)
+        manual_direction = 1
+        while True:
+            manual_throttle = pwm_converter(pot.value) * manual_direction
+            if btn_white.value == False:
+                buttonR_pressed = True
+                buttonL_pressed = False
+            elif btn_blue.value == True:
+                buttonL_pressed = True
+                buttonR_pressed = False
 
-        if btn_white.value == False:
-            buttonR_pressed = True
-            buttonL_pressed = False
-        elif btn_blue.value == False:
-            buttonL_pressed = True
-            buttonR_pressed = False
+            if buttonR_pressed:
+                print("CW")
+                manual_direction = 1
+            elif buttonL_pressed:
+                print("CCW")
+                manual_direction = -1
 
-        if buttonR_pressed:
-            print("CW")
-            motor_throttle = abs(manual_throttle)
-            motorLed.throttle = motor_throttle
-        elif buttonL_pressed:
-            print("CCW")
-            motor_throttle = abs(manual_throttle) * -1
-            motorLed.throttle = motor_throttle
-        else:
-            motorLed.throttle = manual_throttle
-        
-        print("Motor throttle is set to: ", motor_throttle)
+            motorLed.throttle = manual_throttle 
+            
+            print("Motor throttle is set to: ", manual_throttle)
 
-        time.sleep(0.1)
+            time.sleep(0.1)
     
 
 # function to convert potentiometer value to pwm throttle
@@ -78,8 +81,8 @@ def pwm_converter(value):
     return scaled_value
 
 
-while True:
-    manualRide()
+# SWITCH BETWEEN MANUAL AND WEB CONTROL BY COMMENTING OUT THE OTHER
+manualRide()
 
 #  onboard LED setup
 led = DigitalInOut(board.LED)
@@ -256,5 +259,5 @@ def webpage():
 
 
 
-
+# SWITCH BETWEEN MANUAL AND WEB CONTROL BY COMMENTING OUT THE OTHER
 #server.serve_forever(str(wifi.radio.ipv4_address))
