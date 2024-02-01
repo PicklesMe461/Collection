@@ -26,7 +26,7 @@ class Ui_widget(object):
         self.frequency = None
         self.sense = None
         self.info = "" 
-        self.target_address = "http://192.168.68.110/"
+        self.target_address = "http://192.168.1.103/"
 
     def setupUi(self, widget):
         widget.setObjectName("widget")
@@ -127,7 +127,8 @@ class Ui_widget(object):
         self.label_5.setText("Duty Cycle: {}, Frequency: {}, Sense: {}".format(self.duty_cycle, self.frequency, self.sense))
         
         try:
-            requests.post(self.target_address, data={"MODE" : "START", "DUTY_CYCLE" : str(self.duty_cycle), "FREQUENCY" : str(self.frequency), "SENSE" : "CW"})
+            #requests.post(self.target_address, data={"MODE" : "START", "DUTY_CYCLE" : str(self.duty_cycle), "FREQUENCY" : str(self.frequency), "SENSE" : "CW"})
+            requests.post(self.target_address, data={"MODE" : "START"})       
         except Exception as e:
             print(e)
         return "start"

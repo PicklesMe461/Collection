@@ -19,9 +19,9 @@ from pwmio import PWMOut
 # Motors set up
 #Green Wire
 default_frequency = 100
-motor4a = PWMOut(board.GP18, frequency=default_frequency, variable_frequency=True)
+motor4a = PWMOut(board.GP17, frequency=default_frequency, variable_frequency=True)
 #Yellow Wire
-motor3a = PWMOut(board.GP17, frequency=default_frequency, variable_frequency=True)
+motor3a = PWMOut(board.GP18, frequency=default_frequency, variable_frequency=True)
 motor_throttle = 0.9
 motorLed = Motor.DCMotor(motor3a, motor4a)
 motorLed.throttle = motor_throttle
@@ -85,6 +85,11 @@ def buttonpress(request: Request):
         motor_throttle = abs(motorLed.throttle) * -1
         motorLed.throttle = motor_throttle
 
+    if "START" in raw_text:
+        # Start Motor
+        print("START")
+        motorLed.throttle = motor_throttle
+
     if "STOP" in raw_text:
         # Stop Motor
         print("STOP")
@@ -93,7 +98,11 @@ def buttonpress(request: Request):
     if "FREQUENCY" in raw_text:
         # Set Motor PWM frequency
         print("FREQUENCY")
-        new_frequency = int(raw_text.split("FREQUENCY+")[1].split("=")[0])
+        try:
+            new_frequency = int(raw_text.split("FREQUENCY+")[1].split("=")[0])
+        except Exception as e:
+            new_frequency = int(raw_text.split("FREQUENCY=")[1])
+        
         print(new_frequency)
         motor4a.frequency = new_frequency
         motor3a.frequency = new_frequency
@@ -108,7 +117,11 @@ def buttonpress(request: Request):
         # Set Motor PWM
         try:
             # Get the PWM value from raw text
-            pwm = raw_text.split("PWM+")[1].split("=")[0]
+
+            try:
+                pwm = raw_text.split("PWM+")[1].split("=")[0]
+            except Exception as e:
+                pwm = raw_text.split("PWM=")[1]
             print(pwm)
             motor_throttle = int(pwm) / 100
             print("Motor throttle is set to: ", motor_throttle)
