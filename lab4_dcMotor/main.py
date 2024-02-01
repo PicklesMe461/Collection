@@ -9,10 +9,12 @@ import wifi
 import socketpool
 import busio
 import board
+from analogio import AnalogIn
 import microcontroller
 from digitalio import DigitalInOut, Direction
 from adafruit_httpserver import Server, Request, Response, POST
 import helpers
+import digitalio
 from adafruit_motor import motor as Motor
 from pwmio import PWMOut
 
@@ -25,10 +27,59 @@ motor3a = PWMOut(board.GP18, frequency=default_frequency, variable_frequency=Tru
 motor_throttle = 0.9
 motorLed = Motor.DCMotor(motor3a, motor4a)
 motorLed.throttle = motor_throttle
+
+#white Button Right Pulled up
+btn_white = digitalio.DigitalInOut(board.GP22)
+btn_white.direction = digitalio.Direction.INPUT
+btn_white.pull = digitalio.Pull.UP
+
+#Blue Button Left Pulled down
+btn_blue = digitalio.DigitalInOut(board.GP14)
+btn_blue.direction = digitalio.Direction.INPUT
+btn_blue.pull = digitalio.Pull.DOWN
+
+# Pot
+pot = AnalogIn(board.GP26)
+
 def printMotorStatus(motor):
     print(f"Motor throttle is set to {motor.throttle}.")
 
+def manualRide():
+        buttonR_pressed = False
+        buttonL_pressed = False
+        manual_throttle = pwm_converter(pot.value)
 
+        if btn_white.value == False:
+            buttonR_pressed = True
+            buttonL_pressed = False
+        elif btn_blue.value == False:
+            buttonL_pressed = True
+            buttonR_pressed = False
+
+        if buttonR_pressed:
+            print("CW")
+            motor_throttle = abs(manual_throttle)
+            motorLed.throttle = motor_throttle
+        elif buttonL_pressed:
+            print("CCW")
+            motor_throttle = abs(manual_throttle) * -1
+            motorLed.throttle = motor_throttle
+        else:
+            motorLed.throttle = manual_throttle
+        
+        print("Motor throttle is set to: ", motor_throttle)
+
+        time.sleep(0.1)
+    
+
+# function to convert potentiometer value to pwm throttle
+def pwm_converter(value):
+    scaled_value = (value/65535)
+    return scaled_value
+
+
+while True:
+    manualRide()
 
 #  onboard LED setup
 led = DigitalInOut(board.LED)
@@ -150,6 +201,7 @@ font_family = "monospace"
 #  this way, can insert string variables from code.py directly
 #  of note, use {{ and }} if something from html *actually* needs to be in brackets
 #  i.e. CSS style formatting
+
 def webpage():
     html = f"""
     <!DOCTYPE html>
@@ -205,4 +257,4 @@ def webpage():
 
 
 
-server.serve_forever(str(wifi.radio.ipv4_address))
+#server.serve_forever(str(wifi.radio.ipv4_address))

@@ -8,17 +8,17 @@ PIN LAYOUT FOR THE LABS
 GP2 to GP9
 
 ## Button Pins
-GP14 Blue Button
-GP22 White Button
+GP14 Blue Button (Left for motors) PULL DOWN
+GP22 White Button (Right for motors) PULL UP
 
 ## Pot Pin
 GP26 Analog Input
 
 ## Servo Pin
-GP15 Servo PWM Out
+GP0 Servo PWM Out
 
 ## DC Motor Pins
-GP16 and GP17 PWM Out
+GP18 and GP17 PWM Out
 
 ## Step Motor Pins
 GP10 GP11 GP12 GP13 PWM Out
