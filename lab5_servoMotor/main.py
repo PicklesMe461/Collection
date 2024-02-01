@@ -20,7 +20,7 @@ import helpers
 pwm_servo = pwmio.PWMOut(board.GP0, duty_cycle=2 ** 15, frequency=100)
 
 # potentiometer setup.
-pot = AnalogIn(board.GP27)
+pot = AnalogIn(board.GP26)
 
 # Create a servo object, my_servo.
 my_servo = servo.Servo(pwm_servo)
@@ -31,17 +31,88 @@ led = DigitalInOut(board.LED)
 led.direction = Direction.OUTPUT
 led.value = False
 
-#  connect to network
-print()
-print("Connecting to WiFi")
-#  connect to your SSID
-wifi.radio.connect(os.getenv('WIFI_SSID'), os.getenv('WIFI_PASSWORD'))
-print("Connected to WiFi")
+# Manual functions
 
-pool = socketpool.SocketPool(wifi.radio)
-print("pool created")
-server = Server(pool, "/static", debug=True)
-print("server created")
+
+
+def angle_converter(value):
+    scaled_value = (value/65535)*180
+    return scaled_value
+
+def RCServo_pos_Pot(flag):
+    while flag:
+        my_servo.angle = angle_converter(pot.value)
+        time.sleep(0.035)
+
+def RCServo_pos_REPL():
+    while True:
+        try:
+            pos = float(input("Please enter the position(in angles[0-180]):"))
+
+            my_servo.angle = pos
+
+        except:
+            print("Invalid value, please enter a floating number btw [0-180] range.")
+            print("exiting...")
+            break
+    main()
+
+
+def main_no_wifi():
+    options = {"option 1" : "REPL", "option 2": "potentiometer"}
+    print("----Servo Angle Control----")
+    print("Option 1 - REPL\nOption 2 - Pot")
+    print("########---------########")
+    option_input = input("Please make a mode selection:")
+
+    if option_input == "REPL":
+        RCServo_pos_REPL()
+    elif option_input == "pot":
+        RCServo_pos_Pot(True)
+    else: 
+        print("Invalid option")
+        main()
+
+def main():
+    options = {"option 1" : "REPL", "option 2": "potentiometer"}
+    print("----Servo Angle Control----")
+    print("Option 1 - REPL\nOption 2 - Pot \n Option 3 - http")
+    print("########---------########")
+    option_input = input("Please make a mode selection:")
+
+    if option_input == "REPL":
+        RCServo_pos_REPL()
+    elif option_input == "pot":
+        RCServo_pos_Pot(True)
+    elif option_input == "http":
+        try:
+            server.serve_forever(str(wifi.radio.ipv4_address))
+        except Exception as e:
+            print(e)
+            print("No wifi connection")
+            main_no_wifi()
+    else: 
+        print("Invalid option")
+        main()
+
+
+
+#  connect to network
+try:
+    print()
+    print("Connecting to WiFi")
+    #  connect to your SSID
+    wifi.radio.connect(os.getenv('WIFI_SSID'), os.getenv('WIFI_PASSWORD'))
+    print("Connected to WiFi")
+
+    pool = socketpool.SocketPool(wifi.radio)
+    print("pool created")
+    server = Server(pool, "/static", debug=True)
+    print("server created")
+except Exception as e:
+    print(e)
+    print("No wifi connection")
+    main_no_wifi()
 
 #  route default static IP
 @server.route("/")
@@ -156,42 +227,6 @@ def webpage():
 
 
 
+main()
 
-
-def angle_converter(value):
-    scaled_value = (value/65535)*180
-    return scaled_value
-
-def RCServo_pos_Pot(flag):
-    while flag:
-        my_servo.angle = angle_converter(pot.value)
-        time.sleep(0.1)
-
-def RCServo_pos_REPL():
-    while True:
-        try:
-            pos = float(input("Please enter the position(in angles[0-180]):"))
-
-            my_servo.angle = pos
-
-        except:
-            print("Invalid value, please enter a floating number btw [0-180] range.")
-            print("exiting...")
-            break
-
-
-def main():
-    options = {"option 1" : "REPL", "option 2": "potentiometer"}
-    print("----Servo Angle Control----")
-    print("Option 1 - REPL\nOption 2 - Potentiometer")
-    print("########---------########")
-    option_input = input("Please make a mode selection:")
-
-    if option_input == "REPL":
-        RCServo_pos_REPL()
-    elif option_input == "pot":
-        RCServo_pos_Pot(True)
-
-#main()
-
-server.serve_forever(str(wifi.radio.ipv4_address))
+#server.serve_forever(str(wifi.radio.ipv4_address))
