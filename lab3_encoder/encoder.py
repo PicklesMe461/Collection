@@ -111,4 +111,4 @@ def qrdTest():
         time.sleep(delay)
 
 
-x4()
+x2()
