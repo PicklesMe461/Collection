@@ -36,6 +36,7 @@ def pulse():
     
 
 def x1():
+    # Change happens when one of the QRD sensors detects black, while the other one is on white
     global forward
     global qrdAState
     global qrdBState
@@ -56,7 +57,50 @@ def x1():
             qrdAState.pop(0)
             qrdBState.pop(0)
 
+def x2():
+    # Pulse happens when the forward sensor changes
+    #the old value of the forward sensor is equal to the new value of the back sensor
+    global forward
+    global qrdAState
+    global qrdBState
+    global threshold
+    global delay
 
+    while True:
+        qrdAState.append(getQRDState(qrdA, threshold))
+        qrdBState.append(getQRDState(qrdB, threshold))
+        if qrdAState[0] == qrdBState[1] and qrdBState[1] != qrdBState[0]:
+            forward = "A"
+            pulse()
+        elif qrdBState[0] == qrdAState[1] and qrdAState[1] != qrdAState[0]:
+            forward = "B"
+            pulse()
+        time.sleep(delay)
+        if len(qrdAState) >= 2:
+            qrdAState.pop(0)
+            qrdBState.pop(0)
+
+
+def x4():
+    global forward
+    global qrdAState
+    global qrdBState
+    global threshold
+    global delay
+    counter = 0
+    # Pulse happens when any value changes
+    while True:
+        qrdAState.append(getQRDState(qrdA, threshold))
+        qrdBState.append(getQRDState(qrdB, threshold))
+        if qrdAState[0] != qrdAState[1] or qrdBState[0] != qrdBState[1]:
+            pulse()
+            counter = counter + 1
+        time.sleep(delay)
+        print("Counter: ", counter)
+        
+        if len(qrdAState) >= 2:
+            qrdAState.pop(0)
+            qrdBState.pop(0)
 
 def qrdTest():
     while True:
@@ -67,4 +111,4 @@ def qrdTest():
         time.sleep(delay)
 
 
-x1()
+x4()
