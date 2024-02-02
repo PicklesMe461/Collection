@@ -8,6 +8,8 @@ import os
 from analogio import AnalogIn
 from digitalio import DigitalInOut, Direction
 from adafruit_httpserver import Server, Request, Response, POST
+import microcontroller
+
 
 wire1 = digitalio.DigitalInOut(board.GP10)
 wire1.direction = digitalio.Direction.OUTPUT
@@ -22,12 +24,19 @@ wire3.direction = digitalio.Direction.OUTPUT
 wire4 = digitalio.DigitalInOut(board.GP13)
 wire4.direction = digitalio.Direction.OUTPUT
 
+# Global delay variable
+delay = 20
+
 wires = [wire1, wire2, wire3, wire4]
 
 #  onboard LED setup
 led = DigitalInOut(board.LED)
 led.direction = Direction.OUTPUT
 led.value = False
+
+running = False
+server_request = None
+sequences = None
 
 
 
@@ -122,10 +131,15 @@ def base(request: Request):  # pylint: disable=unused-argument
 #  if a button is pressed on the site
 @server.route("/", POST)
 def buttonpress(request: Request):
+    global delay
+    global server_request
+    global sequences
+    global running
 
     #  get the raw text
     raw_text = request.raw_request.decode("utf8")
-    print(raw_text)
+    
+    #print(raw_text)
     #  if the led on button was pressed
     if "ON" in raw_text:
         #  turn on the onboard LED
@@ -139,20 +153,45 @@ def buttonpress(request: Request):
     if "STOP" in raw_text:
         # STOP Motor
         print("STOP")
+        server_request = "STOP"
+        running = False
+    
+    if "SEQUENCES" in raw_text:
+        # START Motor
+        print("START")
+        running = True
+        # Get the list of sequences from the request data
+        sequences = raw_text.replace('&', '')
+        sequences = sequences.split('SEQUENCES=')
+        sequences.pop(0)
+        for i in range(len(sequences)):
+            sequences[i] = sequences[i].split('+')
         
-        
-    if "PWM" in raw_text:
-        # Set Motor angle
-        try:
-            # Get the PWM value from raw text
+        print("Sequences are as follows: \n ", str(sequences))
 
-            try:
-                pwm = raw_text.split("PWM+")[1].split("=")[0]
-            except Exception as e:
-                pwm = raw_text.split("PWM=")[1]
-            print(pwm)
-            # Set the SERVO angle
-            my_servo.angle = int(pwm)
+        
+        
+    if "DELAY" in raw_text:
+        # Set delay
+        try:
+            delay = int(raw_text.split("DELAY+")[1].split("=")[0])
+        except Exception as e:
+            delay = int(raw_text.split("DELAY=")[1])
+        print(delay)
+
+    if "SINGLE" in raw_text:
+        try:
+            single_step = raw_text.split("SINGLE=")[1]
+            single_step = single_step.split("+")
+            print(single_step)
+            wanted_rotation(single_step, "single", delay)
+
+        except Exception as e:
+            print(e)
+            print("step value not found")
+            print(raw_text)
+                      
+            
 
         except Exception as e:
             print("Exception ", e)
@@ -161,20 +200,6 @@ def buttonpress(request: Request):
 
     
     return Response(request, f"{webpage()}", content_type='text/html')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -236,5 +261,28 @@ def webpage():
     return html
 
 
+print("starting server..")
+# startup the server
+try:
+    server.start(str(wifi.radio.ipv4_address))
+    print("Listening on http://%s:80" % wifi.radio.ipv4_address)
+#  if the server fails to begin, restart the pico w
+except OSError:
+    time.sleep(5)
+    print("restarting..")
+    microcontroller.reset()
 
 
+while True:
+    # Poll server for requests
+    server.poll()
+    if running:
+        for sequence in sequences:
+            sequence_num = 0
+            wanted_rotation(sequences[sequence_num], "single", delay)
+            time.sleep(delay/1000)
+
+            if not running:
+                break
+
+    pass
