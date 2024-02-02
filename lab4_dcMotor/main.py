@@ -1,3 +1,4 @@
+
 # SPDX-FileCopyrightText: 2023 Liz Clark for Adafruit Industries
 #
 # SPDX-License-Identifier: MIT
@@ -27,7 +28,7 @@ default_frequency = 100
 motor4a = PWMOut(board.GP17, frequency=default_frequency, variable_frequency=True)
 #Yellow Wire
 motor3a = PWMOut(board.GP18, frequency=default_frequency, variable_frequency=True)
-motor_throttle = 0.9
+motor_throttle = 0.7
 motorLed = Motor.DCMotor(motor3a, motor4a)
 motorLed.throttle = motor_throttle
 
@@ -82,7 +83,7 @@ def pwm_converter(value):
 
 
 # SWITCH BETWEEN MANUAL AND WEB CONTROL BY COMMENTING OUT THE OTHER
-manualRide()
+#manualRide()
 
 #  onboard LED setup
 led = DigitalInOut(board.LED)
@@ -260,4 +261,4 @@ def webpage():
 
 
 # SWITCH BETWEEN MANUAL AND WEB CONTROL BY COMMENTING OUT THE OTHER
-#server.serve_forever(str(wifi.radio.ipv4_address))
+server.serve_forever(str(wifi.radio.ipv4_address))

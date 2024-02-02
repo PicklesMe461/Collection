@@ -166,7 +166,14 @@ def buttonpress(request: Request):
         sequences.pop(0)
         for i in range(len(sequences)):
             sequences[i] = sequences[i].split('+')
-        
+
+        steps = list()
+        for sequence in sequences:
+            print(sequence)
+            i = len(sequence)
+            for index in range(i):
+                sequence[index] = int(sequence[index])
+        print(sequence)
         print("Sequences are as follows: \n ", str(sequences))
 
         
@@ -183,6 +190,12 @@ def buttonpress(request: Request):
         try:
             single_step = raw_text.split("SINGLE=")[1]
             single_step = single_step.split("+")
+            i = 0
+            for step in single_step:
+                step = int(step)
+                single_step[i] = step
+                i +=1
+
             print(single_step)
             wanted_rotation(single_step, "single", delay)
 
@@ -276,10 +289,11 @@ except OSError:
 while True:
     # Poll server for requests
     server.poll()
+    
     if running:
         for sequence in sequences:
-            sequence_num = 0
-            wanted_rotation(sequences[sequence_num], "single", delay)
+            wanted_rotation(sequence, "single", delay)
+            server.poll()
             time.sleep(delay/1000)
 
             if not running:
