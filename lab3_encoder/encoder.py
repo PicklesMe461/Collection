@@ -42,6 +42,7 @@ def x1():
     global qrdBState
     global threshold
     global delay
+    counter = 0
     
     while True:
         qrdAState.append(getQRDState(qrdA, threshold))
@@ -49,10 +50,15 @@ def x1():
         if qrdAState[1] == 1 and qrdAState[0] == 0 and qrdBState[1] == 0:
             forward = "A"
             pulse()
+            counter = counter +1
+            print("Counter: ", counter)
         elif qrdBState[1] == 1 and qrdBState[0] == 0 and qrdAState[1] == 0:
             forward = "B"
             pulse()
-        time.sleep(delay)
+            counter = counter + 1
+            print("Counter: ", counter)
+        
+        
         if len(qrdAState) >= 2:
             qrdAState.pop(0)
             qrdBState.pop(0)
@@ -65,6 +71,7 @@ def x2():
     global qrdBState
     global threshold
     global delay
+    counter = 0
 
     while True:
         qrdAState.append(getQRDState(qrdA, threshold))
@@ -72,10 +79,15 @@ def x2():
         if qrdAState[0] == qrdBState[1] and qrdBState[1] != qrdBState[0]:
             forward = "A"
             pulse()
+            counter = counter + 1
+            print("Counter: ", counter)
         elif qrdBState[0] == qrdAState[1] and qrdAState[1] != qrdAState[0]:
             forward = "B"
             pulse()
+            counter = counter + 1
+            print("Counter: ", counter)
         time.sleep(delay)
+        
         if len(qrdAState) >= 2:
             qrdAState.pop(0)
             qrdBState.pop(0)
@@ -95,8 +107,9 @@ def x4():
         if qrdAState[0] != qrdAState[1] or qrdBState[0] != qrdBState[1]:
             pulse()
             counter = counter + 1
+            print("Counter: ", counter)
         time.sleep(delay)
-        print("Counter: ", counter)
+        
         
         if len(qrdAState) >= 2:
             qrdAState.pop(0)
@@ -111,4 +124,4 @@ def qrdTest():
         time.sleep(delay)
 
 
-x2()
+x4()
